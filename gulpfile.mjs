@@ -12,15 +12,23 @@ const bs = browserSync.create();
 
 // Define paths
 const paths = {
-  pug: 'src/views/pages/**/*.pug',
-  sass: 'src/styles/**/*.scss',
-  js: 'src/scripts/**/*.js',
+  views: 'src/views/**/*.pug',
+  pages: 'src/views/pages/**/*.pug',
+  styles: 'src/styles/**/*.scss',
+  scripts: 'src/scripts/**/*.js',
   img: 'src/assets/img/**',
   pdf: 'src/assets/pdf/**',
   dist: 'dist',
 };
 
-// Clean task using deleteAsync from del
+// Define destination paths
+const dest = {
+  html: `${paths.dist}`,
+  css: `${paths.dist}/assets/css`,
+  js: `${paths.dist}/assets/js`,
+};
+
+// Clean task
 export async function clean() {
   return del([
     `${paths.dist}/**`,
@@ -35,9 +43,9 @@ export async function clean() {
 export function pugTask() {
   console.log('Recompiling Pug files...');
   return gulp
-    .src(paths.pug)
+    .src(paths.pages)
     .pipe(pug({ doctype: 'html', pretty: true, selfClosingTags: false }))
-    .pipe(gulp.dest(`${paths.dist}`))
+    .pipe(gulp.dest(dest.html))
     .on('end', () => {
       console.log('Pug compilation complete. Triggering BrowserSync reload...');
       bs.reload();
@@ -47,7 +55,7 @@ export function pugTask() {
 // Compile Sass to CSS
 export function sassTask() {
   return gulp
-    .src(paths.sass)
+    .src(paths.styles)
     .pipe(sassProcessor().on('error', sassProcessor.logError))
     .pipe(autoprefixer())
     .pipe(
@@ -57,16 +65,13 @@ export function sassTask() {
         );
       })
     )
-    .pipe(gulp.dest(`${paths.dist}/assets/css`))
+    .pipe(gulp.dest(dest.css))
     .pipe(bs.stream());
 }
 
 // Copy JS
 export function jsTask() {
-  return gulp
-    .src(paths.js)
-    .pipe(gulp.dest(`${paths.dist}/assets/js`))
-    .pipe(bs.stream());
+  return gulp.src(paths.scripts).pipe(gulp.dest(dest.js)).pipe(bs.stream());
 }
 
 // Watch task
@@ -76,9 +81,9 @@ export function watchTask() {
       baseDir: paths.dist,
     },
   });
-  gulp.watch(paths.pug, pugTask);
-  gulp.watch(paths.sass, sassTask);
-  gulp.watch(paths.js, jsTask);
+  gulp.watch(paths.views, pugTask);
+  gulp.watch(paths.styles, sassTask);
+  gulp.watch(paths.scripts, jsTask);
 }
 
 // Default task
