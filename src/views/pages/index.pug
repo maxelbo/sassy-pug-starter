@@ -1,0 +1,23 @@
+doctype html
+html(lang="en")
+  head
+    meta(charset="UTF-8")
+    meta(name="viewport", content="width=device-width, initial-scale=1.0")
+    title Example Page
+    link(rel="stylesheet", href="/assets/css/style.css")
+  body
+    header
+      h1 Hello, World!
+    main
+      p This is a simple page,
+        br
+        |just to say hello.
+      img(src="/img/example.webp", alt="Example Image")
+      p#text-to-change This text can be changed
+      button#change-text-button(type="button") Change Text
+      div
+        form(method="get" action="/pdf/example.pdf" target="_blank")
+          button(type="submit") Download Example File
+    footer
+      p &copy; #{new Date().getFullYear()} Example Page
+    script(src="/assets/js/script.js")
