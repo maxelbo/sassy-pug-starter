@@ -22,7 +22,7 @@ const paths = {
 };
 
 // Define destination paths
-const dest = {
+const destPaths = {
   html: `${paths.dist}`,
   css: `${paths.dist}/assets/css`,
   js: `${paths.dist}/assets/js`,
@@ -45,7 +45,7 @@ export function pugTask() {
   return gulp
     .src(paths.pages)
     .pipe(pug({ doctype: 'html', pretty: true, selfClosingTags: false }))
-    .pipe(gulp.dest(dest.html))
+    .pipe(gulp.dest(destPaths.html))
     .on('end', () => {
       console.log('Pug compilation complete. Triggering BrowserSync reload...');
       bs.reload();
@@ -65,13 +65,16 @@ export function sassTask() {
         );
       })
     )
-    .pipe(gulp.dest(dest.css))
+    .pipe(gulp.dest(destPaths.css))
     .pipe(bs.stream());
 }
 
 // Copy JS
 export function jsTask() {
-  return gulp.src(paths.scripts).pipe(gulp.dest(dest.js)).pipe(bs.stream());
+  return gulp
+    .src(paths.scripts)
+    .pipe(gulp.dest(destPaths.js))
+    .pipe(bs.stream());
 }
 
 // Watch task
